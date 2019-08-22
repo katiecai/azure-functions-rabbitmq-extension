@@ -32,7 +32,7 @@ namespace WebJobs.Extensions.RabbitMQ.Samples
 
         public static void TimerTrigger_PocoOutput(
              [TimerTrigger("00:01")] TimerInfo timer,
-             [RabbitMQ(HostName = "localhost", QueueName = "queue")] out TestClass outputMessage,
+             [RabbitMQ(QueueName = "queue")] out TestClass outputMessage,
              ILogger logger)
         {
             outputMessage = new TestClass(1, 1);
