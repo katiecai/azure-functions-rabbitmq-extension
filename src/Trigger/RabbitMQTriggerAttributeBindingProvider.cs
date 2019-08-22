@@ -52,6 +52,8 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
 
             string password = Resolve(attribute.PasswordSetting);
 
+            string dlxName = Resolve(attribute.DlxName);
+
             int port = attribute.Port;
 
             if (string.IsNullOrEmpty(connectionString) && !Utility.ValidateUserNamePassword(userName, password, hostName))
@@ -62,7 +64,7 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
             // If there's no specified batch number, default to 1
             ushort batchNumber = 1;
 
-            IRabbitMQService service = _provider.GetService(connectionString, hostName, queueName, userName, password, port);
+            IRabbitMQService service = _provider.GetService(connectionString, hostName, queueName, userName, password, port, dlxName);
 
             return Task.FromResult<ITriggerBinding>(new RabbitMQTriggerBinding(service, hostName, queueName, batchNumber, _logger));
         }

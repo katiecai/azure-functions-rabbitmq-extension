@@ -17,6 +17,8 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
 
         public string ConnectionString { get; set; }
 
+        public string DlxName { get; set; }
+
         public int Port { get; set; }
     }
 }

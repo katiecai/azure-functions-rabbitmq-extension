@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using RabbitMQ.Client;
 
 namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
@@ -15,26 +16,37 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
         private string _queueName;
         private string _userName;
         private string _password;
+        private string _dlxName;
         private int _port;
 
         public IModel Model => _model;
 
         public IBasicPublishBatch BasicPublishBatch => _batch;
 
-        public RabbitMQService(string connectionString, string hostName, string queueName, string userName, string password, int port)
+        public RabbitMQService(string connectionString, string hostName, string queueName, string userName, string password, int port, string dlxName)
         {
             _connectionString = connectionString;
             _hostName = hostName;
             _queueName = queueName ?? throw new ArgumentNullException(nameof(queueName));
             _userName = userName;
             _password = password;
+            _dlxName = dlxName;
             _port = port;
 
             ConnectionFactory connectionFactory = GetConnectionFactory(_connectionString, _hostName, _userName, _password, _port);
 
             _model = connectionFactory.CreateConnection().CreateModel();
 
-            _model.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+            Dictionary<string, object> args = null;
+
+            if (!string.IsNullOrEmpty(dlxName))
+            {
+                _model.ExchangeDeclare(dlxName, "direct");
+                args = new Dictionary<string, object>();
+                args["x-dead-letter-exchange"] = dlxName;
+            }
+
+            _model.QueueDeclare(queue: _queueName, durable: false, exclusive: false, autoDelete: false, arguments: args);
             _batch = _model.CreateBasicPublishBatch();
         }
 

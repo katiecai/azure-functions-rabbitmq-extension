@@ -29,12 +29,23 @@ namespace Microsoft.Azure.WebJobs
             QueueName = queueName;
         }
 
+        // Just have one constructor that includes DLX for now
+
+        public RabbitMQTriggerAttribute(string connectionStringSetting, string queueName, string dlxName)
+        {
+            ConnectionStringSetting = connectionStringSetting;
+            QueueName = queueName;
+            DlxName = dlxName;
+        }
+
         [ConnectionString]
-        public string ConnectionStringSetting { get;  }
+        public string ConnectionStringSetting { get; set; }
 
         public string HostName { get; }
 
         public string QueueName { get; }
+
+        public string DlxName { get; }
 
         [AppSetting]
         public string UserNameSetting { get; }

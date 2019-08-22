@@ -85,6 +85,7 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
             string userName = Utility.FirstOrDefault(attribute.UserName, _options.Value.UserName);
             string password = Utility.FirstOrDefault(attribute.Password, _options.Value.Password);
             int port = Utility.FirstOrDefault(attribute.Port, _options.Value.Port);
+            string dlxName = Utility.FirstOrDefault(attribute.DlxName, _options.Value.DlxName);
 
 
             RabbitMQAttribute resolvedAttribute;
@@ -98,9 +99,10 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
                 UserName = userName,
                 Password = password,
                 Port = port,
+                DlxName = dlxName,
             };
 
-            service = GetService(connectionString, hostName, queueName, userName, password, port);
+            service = GetService(connectionString, hostName, queueName, userName, password, port, dlxName);
 
             return new RabbitMQContext
             {
@@ -109,9 +111,9 @@ namespace Microsoft.Azure.WebJobs.Extensions.RabbitMQ
             };
         }
 
-        internal IRabbitMQService GetService(string connectionString, string hostName, string queueName, string userName, string password, int port)
+        internal IRabbitMQService GetService(string connectionString, string hostName, string queueName, string userName, string password, int port, string dlxName)
         {
-            return _rabbitMQServiceFactory.CreateService(connectionString, hostName, queueName, userName, password, port);
+            return _rabbitMQServiceFactory.CreateService(connectionString, hostName, queueName, userName, password, port, dlxName);
         }
     }
 }
