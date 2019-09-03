@@ -165,21 +165,20 @@ dotnet run
 3) Once the message is sent on your terminal, you should see the trigger being fired and logs in your debug console.
 
 ## Trigger and Output Binding
-
 ```C#
 public static void RabbitMQTrigger_RabbitMQOutput(
-    [RabbitMQTrigger("localhost", "queue")] string inputMessage,
+    [RabbitMQTrigger("RabbitMQConnection", "queue")] string inputMessage,
     [RabbitMQ(
-        HostName = "localhost",
+        ConnectionStringSetting = "RabbitMQConnection",
         QueueName = "hello")] out string outputMessage,
     ILogger logger)
-{	        
-    {
-        outputMessage = inputMessage;
-        logger.LogInformation($"RabittMQ output binding function sent message: {outputMessage}");
-    }	        
+{
+    outputMessage = inputMessage;
+    logger.LogInformation($"RabittMQ output binding function sent message: {outputMessage}");
 }
 ```
+
+The above sample waits on a trigger from the queue named "queue" connected to the connection string value of key "RabbitMQConnection." The output binding takes the messages from the trigger queue and outputs them to queue "hello" connected to the connection configured by the key "RabibtMQConnection". When running locally, add the connection string setting to appsettings.json file. When running in Azure, add this setting as [ConnectionString ](https://azure.microsoft.com/en-us/blog/windows-azure-web-sites-how-application-strings-and-connection-strings-work/) for your app.
 
 The above sample uses the RabbitMQ extension both to bind to an output queue and to wait on a trigger. In this example, we wait on a message from the queue "queue" connected to localhost. Once we receive a new message in that queue, the trigger fires. We then set the output binding to the variable **outputMessage**, which we then configure to be sent to the queue named "hello".
 
